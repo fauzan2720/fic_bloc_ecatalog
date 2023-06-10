@@ -15,6 +15,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final LocalDataSource localDataSource = LocalDataSource();
   TextEditingController? emailController;
   TextEditingController? passwordController;
 
@@ -23,14 +24,13 @@ class _LoginPageState extends State<LoginPage> {
     checkAuth();
     emailController = TextEditingController();
     passwordController = TextEditingController();
-
     super.initState();
   }
 
   void checkAuth() async {
-    final auth = await LocalDataSource().getToken();
-    if (auth.isNotEmpty) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) {
+    final auth = await localDataSource.getToken();
+    if (auth.isNotEmpty && context.mounted) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) {
         return const HomePage();
       }));
     }
@@ -39,7 +39,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     super.dispose();
-
     emailController!.dispose();
     passwordController!.dispose();
   }
@@ -63,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
             ),
             TextField(
               obscureText: true,

@@ -2,7 +2,6 @@
 //
 //     final productRequestModel = productRequestModelFromMap(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 class ProductRequestModel {

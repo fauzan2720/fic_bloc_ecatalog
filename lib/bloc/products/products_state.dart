@@ -1,22 +1,36 @@
 part of 'products_bloc.dart';
 
+enum DataStateStatus { initial, loading, loadMore, success, error }
+
 @immutable
-abstract class ProductsState {}
+class ProductsState {
+  final DataStateStatus status;
+  final List<ProductResponseModel>? products;
+  final String errorMessage;
+  final int size;
+  final int page;
 
-class ProductsInitial extends ProductsState {}
-
-class ProductsLoading extends ProductsState {}
-
-class ProductsLoaded extends ProductsState {
-  final List<ProductResponseModel> data;
-  ProductsLoaded({
-    required this.data,
+  const ProductsState({
+    this.status = DataStateStatus.initial,
+    this.products,
+    this.errorMessage = "",
+    this.size = 15,
+    this.page = 1,
   });
-}
 
-class ProductsError extends ProductsState {
-  final String message;
-  ProductsError({
-    required this.message,
-  });
+  ProductsState copyWith({
+    DataStateStatus? status,
+    List<ProductResponseModel>? products,
+    String? errorMessage,
+    int? size,
+    int? page,
+  }) {
+    return ProductsState(
+      status: status ?? this.status,
+      products: products ?? this.products,
+      errorMessage: errorMessage ?? this.errorMessage,
+      size: size ?? this.size,
+      page: page ?? this.page,
+    );
+  }
 }

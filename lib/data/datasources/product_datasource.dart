@@ -6,9 +6,14 @@ import 'package:flutter_ecatalog/data/models/response/product_response_model.dar
 import 'package:http/http.dart' as http;
 
 class ProductDataSource {
-  Future<Either<String, List<ProductResponseModel>>> getAllProduct() async {
-    final response =
-        await http.get(Uri.parse('https://api.escuelajs.co/api/v1/products/'));
+  Future<Either<String, List<ProductResponseModel>>> getAllProduct({
+    required int size,
+    required int page,
+  }) async {
+    final int offset = (page - 1) * size;
+
+    final response = await http.get(Uri.parse(
+        'https://api.escuelajs.co/api/v1/products?limit=$size&offset=$offset'));
     if (response.statusCode == 200) {
       return Right(List<ProductResponseModel>.from(jsonDecode(response.body)
           .map((x) => ProductResponseModel.fromMap(x))));
@@ -28,6 +33,20 @@ class ProductDataSource {
       return Right(ProductResponseModel.fromJson(response.body));
     } else {
       return const Left('error add product');
+    }
+  }
+
+  Future<Either<String, ProductResponseModel>> updateProduct(
+      int id, ProductRequestModel model) async {
+    final response = await http.put(
+        Uri.parse('https://api.escuelajs.co/api/v1/products/$id'),
+        body: model.toJson(),
+        headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode == 200) {
+      return Right(ProductResponseModel.fromJson(response.body));
+    } else {
+      return const Left('error update product');
     }
   }
 }
